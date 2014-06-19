@@ -67,9 +67,11 @@ class Excel extends \PHPExcel {
     }
 
 
-    public function getCellName($col,$row) {
+    public static function getCellName($col,$row) {
 
         $cell = "";
+
+        $col += 65;
 
         $prefix = 64;
         while($col > 90) {
@@ -124,8 +126,6 @@ class Excel extends \PHPExcel {
             $this->getActiveSheet()->getStyle($cell)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
         }
 
-        return true;
-
     }
 
 
@@ -145,8 +145,6 @@ class Excel extends \PHPExcel {
         $image->setCoordinates($cell);
 
         $image->setWorksheet($this->getActiveSheet());
-
-        return true;
 
     }
 
