@@ -1,6 +1,6 @@
 <?php
 
-namespace duncan3dc\phpexcel;
+namespace duncan3dc\Phpexcel;
 
 class Excel extends \PHPExcel {
 

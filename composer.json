@@ -16,6 +16,6 @@
         "php": ">=5.4.0"
     },
     "autoload": {
-        "psr-4": {"duncan3dc\\phpexcel\\": "src/"}
+        "psr-4": {"duncan3dc\\Phpexcel\\": "src/"}
     }
 }
