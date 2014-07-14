@@ -30,13 +30,13 @@ Examples
 --------
 
 The Excel class uses a namespace of duncan3dc
-```
-use \duncan3dc\Excel;
+```php
+use duncan3dc\Excel;
 ```
 
 -------------------
 
-```
+```php
 $excel = new Excel();
 
 $excel->setCell("A1","Title", Excel::BOLD | EXCEL::CENTER);
