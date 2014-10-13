@@ -4,6 +4,7 @@ phpexcel
 A simple wrapper around the PHPExcel library
 
 [![Build Status](https://travis-ci.org/duncan3dc/phpexcel.svg?branch=master)](https://travis-ci.org/duncan3dc/phpexcel)
+[![Latest Stable Version](https://poser.pugx.org/duncan3dc/phpexcel/version.svg)](https://packagist.org/packages/duncan3dc/phpexcel)
 
 
 Static Methods
