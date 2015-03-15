@@ -12,8 +12,8 @@
         "role": "Developer"
     }],
     "require": {
-        "phpoffice/phpexcel": "1.8.*",
-        "php": ">=5.4.0"
+        "phpoffice/phpexcel": "^1.8",
+        "php": ">=5.5.0"
     },
     "autoload": {
         "psr-4": {"duncan3dc\\Phpexcel\\": "src/"}
