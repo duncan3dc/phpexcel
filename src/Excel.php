@@ -124,7 +124,7 @@ class Excel extends \PHPExcel
 
     public function addImage($cell, $path)
     {
-        $image = new \PHPExcel_Worksheet_Drawing();
+        $image = new \PHPExcel_Worksheet_Drawing;
 
         $name = pathinfo($path, PATHINFO_BASENAME);
         $image->setName($name);
