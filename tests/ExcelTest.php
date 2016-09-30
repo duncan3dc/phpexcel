@@ -52,4 +52,48 @@ class ExcelTest extends \PHPUnit_Framework_TestCase
             ["Sheet 2", "Data"],
         ], $result);
     }
+
+
+    public function assertWriteAndRead(array $expected, callable $callback)
+    {
+        $tmp = tempnam("/tmp", "phpexcel_");
+
+        $excel = new Excel;
+
+        $callback($excel);
+
+        $excel->save($tmp);
+
+        $result = Excel::read($tmp, 0);
+
+        $this->assertSame($expected, $result);
+
+        unlink($tmp);
+    }
+
+
+    public function testSetCell1()
+    {
+        $this->assertWriteAndRead([
+            ["Test"],
+        ], function ($excel) {
+            $excel->setCell("A1", "Test");
+        });
+    }
+    public function testSetCell2()
+    {
+        $this->assertWriteAndRead([
+            ["7E4"],
+        ], function ($excel) {
+            $excel->setCell("A1", "7E4", Excel::STRING);
+        });
+    }
+    public function testSetCell3()
+    {
+        $this->assertWriteAndRead([
+            [800.0],
+        ], function ($excel) {
+            $excel->setCell("A1", "800A", Excel::NUMERIC);
+        });
+    }
 }

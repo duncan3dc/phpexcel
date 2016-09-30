@@ -9,6 +9,9 @@ class Excel extends \PHPExcel
     const LEFT    =   4;
     const RIGHT   =   8;
     const CENTER  =  16;
+    const STRING  =  32;
+    const NUMERIC =  64;
+
 
 
     public static function read($filename, $key = -1)
@@ -92,33 +95,40 @@ class Excel extends \PHPExcel
         $col = $matches[1];
         $row = $matches[2];
 
-        $this->getActiveSheet()->SetCellValue($cell, $value);
+        $sheet = $this->GetActiveSheet();
 
-        $this->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
-
-        if (!$style) {
-            return true;
+        if ($style & static::STRING) {
+            $sheet->SetCellValueExplicit($cell, $value, \PHPExcel_Cell_DataType::TYPE_STRING);
+        } elseif ($style & static::NUMERIC) {
+            $sheet->SetCellValueExplicit($cell, $value, \PHPExcel_Cell_DataType::TYPE_NUMERIC);
+        } else {
+            $sheet->SetCellValue($cell, $value);
         }
 
+        $sheet->GetColumnDimension($col)->setAutoSize(true);
+
+        $cellStyle = $sheet->GetStyle($cell);
+
+        $font = $cellStyle->getFont();
         if ($style & static::BOLD) {
-            $this->getActiveSheet()->getStyle($cell)->getFont()->setBold(true);
+            $font->setBold(true);
         }
-
         if ($style & static::ITALIC) {
-            $this->getActiveSheet()->getStyle($cell)->getFont()->setItalic(true);
+            $font->setItalic(true);
         }
 
+        $alignment = $cellStyle->getAlignment();
         if ($style & static::LEFT) {
-            $this->getActiveSheet()->getStyle($cell)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+            $alignment->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
         }
-
         if ($style & static::RIGHT) {
-            $this->getActiveSheet()->getStyle($cell)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+            $alignment->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+        }
+        if ($style & static::CENTER) {
+            $alignment->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
         }
 
-        if ($style & static::CENTER) {
-            $this->getActiveSheet()->getStyle($cell)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-        }
+        return $this;
     }
 
 
