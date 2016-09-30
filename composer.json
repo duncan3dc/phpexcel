@@ -12,7 +12,7 @@
         "role": "Developer"
     }],
     "require": {
-        "phpoffice/phpexcel": "^1.8",
+        "phpoffice/phpexcel": "^1.8.1",
         "php": "^5.6|^7.0"
     },
     "require-dev": {
