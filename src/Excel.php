@@ -149,4 +149,138 @@ class Excel extends \PHPExcel
 
         $image->setWorksheet($this->getActiveSheet());
     }
+
+
+    /**
+     * Writes a row of data to the excel document based on a multidimensional array with styling.
+     *
+     * Example - This will write the first column with Test and align it right and format it as a numeric.
+     * [
+     *   "field1"   =>  [
+     *      "value"     =>  "Test",
+     *      "align"     =>  true,
+     *      "numeric"   =>  true,
+     *   ],
+     * ]
+     *
+     * @param array $data The data row to write with styling.
+     * @param int   $row  The row number to write to.
+     *
+     * @return void
+     */
+    public function writeRow(array $data, $row = 1)
+    {
+        $sheet = $this->getActiveSheet();
+
+        $values = [];
+
+        $styles = [
+            "bold"      =>  [],
+            "align"     =>  [],
+            "numeric"   =>  [],
+        ];
+
+        $column = 0;
+        foreach ($data as $field => $detail) {
+            if (array_key_exists("bold", $detail) && $detail["bold"]) {
+                $styles["bold"][$field] = $column;
+            }
+
+            if (array_key_exists("numeric", $detail) && $detail["numeric"]) {
+                $styles["numeric"][$field] = $column;
+            }
+
+            if (array_key_exists("align", $detail) && $detail["align"]) {
+                $styles["align"][$field] = $column;
+            }
+
+            $values[$field] = $detail["value"];
+
+            $column++;
+        }
+
+        $rowStart = $this->getCellName(0, $row);
+
+        $rowEnd = $this->getCellName($column, $row);
+
+        $sheet->getStyle("{$rowStart}:{$rowEnd}")->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+
+        foreach ($styles as $type => $columns) {
+            if (empty($columns)) {
+                continue;
+            }
+
+            $consecutive = $this->getConsecutiveFields($columns);
+
+            foreach ($consecutive as $fields) {
+                $startName = $this->getCellName(current($fields), $row);
+
+                $endName = $this->getCellName(end($fields), $row);
+
+                $cellName = "{$startName}:{$endName}";
+                if ($startName === $endName) {
+                    $cellName = $startName;
+                }
+
+                $cellStyles = $sheet->getStyle($cellName);
+                if ($type === "bold") {
+                    $cellStyles->getFont()->setBold(true);
+                }
+
+                if ($type === "numeric") {
+                    $cellStyles->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
+                }
+
+                if ($type === "align") {
+                    $cellStyles->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                }
+            }
+        }
+
+        $sheet->fromArray($values, null, $this->getCellName(0, $row), true);
+    }
+
+
+    /**
+     * Get an array containing consecutive fields based upon their values.
+     *
+     * @param array $data An array of fields with their column numbers as values.
+     *
+     * @return array
+     */
+    private function getConsecutiveFields(array $data)
+    {
+        $consecutive = [];
+
+        $lastColumn = null;
+
+        $count = 0;
+        foreach ($data as $key => $number) {
+            if (is_null($lastColumn)) {
+                $count++;
+
+                $lastColumn = $number;
+
+                $consecutive[$count][$key] = $number;
+
+                continue;
+            }
+
+            if ($number == ($lastColumn + 1)) {
+                $consecutive[$count][$key] = $number;
+
+                $lastColumn = $number;
+
+                continue;
+            }
+
+            $count++;
+
+            $consecutive[$count][$key] = $number;
+
+            $lastColumn = null;
+        }
+
+        return $consecutive;
+    }
 }
